@@ -1,10 +1,8 @@
-# Sample workflow for building and deploying a Next.js site to GitHub Pages
 name: Deploy Next.js site to Pages
 
 on:
   push:
-    branches: ["master"] # Ensure this matches your default branch name
-
+    branches: ["master"]
   workflow_dispatch:
 
 permissions:
@@ -37,31 +35,28 @@ jobs:
             echo "runner=npx --no-install" >> $GITHUB_OUTPUT
             exit 0
           else
-            echo "Unable to determine package manager in learn-with-towhid-frontend"
+            echo "Unable to determine package manager"
             exit 1
           fi
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24" # Upgraded to 24 to resolve the deprecation warning
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-          # Path to the lock file for caching
-          cache-dependency-path: ./learn-with-towhid-frontend/package-lock.json 
+          cache-dependency-path: learn-with-towhid-frontend/package-lock.json
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
-        with:
-          static_site_generator: next
 
       - name: Restore cache
         uses: actions/cache@v4
         with:
           path: |
             learn-with-towhid-frontend/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('learn-with-towhid-frontend/package-lock.json') }}-${{ hashFiles('learn-with-towhid-frontend/**/*.ts', 'learn-with-towhid-frontend/**/*.tsx') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
+            ${{ runner.os }}-nextjs-${{ hashFiles('learn-with-towhid-frontend/package-lock.json') }}-
 
       - name: Install dependencies
         working-directory: ./learn-with-towhid-frontend
@@ -74,7 +69,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Next.js export creates an 'out' directory inside the frontend folder
           path: ./learn-with-towhid-frontend/out
 
   deploy:
