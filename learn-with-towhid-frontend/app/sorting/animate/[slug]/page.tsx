@@ -16,6 +16,20 @@ import {
 const generateSafeId = () => `box-${Math.random().toString(36).substring(2, 10)}-${Date.now()}`; 
 const ALL_SLUGS = ["bubble-sort", "selection-sort", "insertion-sort", "merge-sort", "quick-sort"];
 
+
+// 1. Add this function to define which paths should be pre-rendered
+export async function generateStaticParams() {
+  const slugs = ["bubble-sort", "selection-sort", "insertion-sort", "merge-sort", "quick-sort"];
+  
+  return slugs.map((slug) => ({
+    slug: slug,
+  }));
+}
+
+// 2. (Optional) Prevent Next.js from trying to render slugs not in the list above
+export const dynamicParams = false;
+
+
 export default function AlgorithmVisualizerPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter();
   const { slug } = use(params);
